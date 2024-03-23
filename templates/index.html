@@ -30,7 +30,7 @@ body {
 }
 .table-title {        
 	padding-bottom: 15px;
-	background: #435d7d;
+	background: #e69940;
 	color: #fff;
 	padding: 16px 30px;
 	min-width: 100%;
@@ -264,6 +264,7 @@ $(document).ready(function(){
 </script>
 </head>
 <body>
+
 <div class="container-xl">
 	<div class="table-responsive">
 		<div class="table-wrapper">
@@ -273,13 +274,13 @@ $(document).ready(function(){
 						<h2>Meeting <b>Organizer</b></h2>
 					</div>
 					<div class="col-sm-6">
-						<a href="#addEmployeeModal" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE147;</i> <span>Add New Meeting</span></a>
+						<a style="background-color: #ae6336;" href="#addEmployeeModal" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE147;</i> <span>Add New Meeting</span></a>
 					</div>
 				</div>
 			</div>
 			<table class="table table-striped table-hover">
 				<thead>
-					<tr>
+					<tr style="background-color: bisque;">
 						<th>
 						ID
 						</th>
@@ -300,8 +301,9 @@ $(document).ready(function(){
 						<td>{{meeting.start_time}}</td>
 						<td>{{meeting.end_time}}</td>
 						<td>{{meeting.participants}}</td>
-						<td>	<a href="#editMeetingModal" class="edit" data-toggle="modal" data-id="{{meeting.id}}"><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>
-						<a href="#deleteMeetingModal" class="delete" data-toggle="modal" data-id="{{meeting.id}}"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
+						<td>	    <a href="#editEmployeeModal_{{ meeting.id }}" class="edit" data-toggle="modal" data-id="{{ meeting.id }}"><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>
+
+						<a href="#deleteMeetingModal_{{ meeting.id }}" class="delete" data-toggle="modal" data-id="{{ meeting.id }}"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
 					</td>
 				</tr>
 					{% endfor %}
@@ -365,10 +367,10 @@ $(document).ready(function(){
 					
 <!-- Edit Modal HTML -->
 {% for meeting in meetings %}
-<div id="editEmployeeModal" class="modal fade">
+<div id="editEmployeeModal_{{ meeting.id }}" class="modal fade">
 	<div class="modal-dialog">
 		<div class="modal-content">
-			<form>
+			<form action="{{ url_for('form_edit', id=meeting.id ) }}" method="POST"  >
 				<div class="modal-header">						
 					<h4 class="modal-title">Edit Meeting</h4>
 					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -376,19 +378,23 @@ $(document).ready(function(){
 				<div class="modal-body">					
 					<div class="form-group">
 						<label>Date</label>
-						<input type="text" class="form-control" name="date">
+						<input type="date" class="form-control" name="date" value="{{ meeting.date }}">
 					</div>
 					<div class="form-group">
 						<label>Topic</label>
-						<input type="email" class="form-control" name="topic" required>
+						<input type="text" class="form-control" name="topic" value="{{ meeting.topic }}" required>
 					</div>
 					<div class="form-group">
 						<label>Start Time</label>
-						<input type="text" name="start_time" class="form-control" required>
+						<input type="time" name="start_time" class="form-control" value="{{ meeting.start_time }}" required>
 					</div>
 					<div class="form-group">
-						<label>End Date</label>
-						<input type="text" name="end_time" class="form-control" required>
+						<label>End Time</label>
+						<input type="time" name="end_time" class="form-control" value="{{ meeting.end_time }}" required>
+					</div>	
+					<div class="form-group">
+						<label>Partipiciants</label>
+						<input type="text" name="participants"  value="{{ meeting.participants }}" class="form-control" required>
 					</div>					
 				</div>
 				<div class="modal-footer">
@@ -400,14 +406,16 @@ $(document).ready(function(){
 	</div>
 </div>
 {% endfor %}
+
 					
 <!-- Delete Modal HTML -->
-<div id="deleteEmployeeModal" class="modal fade">
+{% for meeting in meetings %}
+<div id="deleteMeetingModal_{{ meeting.id }}" class="modal fade">
 	<div class="modal-dialog">
 		<div class="modal-content">
-			<form>
+			<form action="{{ url_for('delete', id=meeting.id) }}" method="POST">
 				<div class="modal-header">						
-					<h4 class="modal-title">Delete Employee</h4>
+					<h4 class="modal-title">Delete Meeting</h4>
 					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 				</div>
 				<div class="modal-body">					
@@ -422,5 +430,37 @@ $(document).ready(function(){
 		</div>
 	</div>
 </div>
+{% endfor %}
+
 </body>
 </html>
+<script>
+    $(document).ready(function() {
+        // Edit Meeting Modal
+        $('#editMeetingModal').on('show.bs.modal', function(event) {
+            var button = $(event.relatedTarget);
+            var meetingId = button.data('id');
+            
+            // AJAX request to fetch meeting details by ID and fill the form fields
+            // Example:
+            $.ajax({
+                url: '/get_meeting_details',
+                type: 'GET',
+                data: { id: meetingId },
+                success: function(response) {
+                    // Assuming response is in JSON format
+                    var meeting = JSON.parse(response);
+                    // Populate form fields with meeting details
+                    $('#editEmployeeModal input[name="date"]').val(meeting.date);
+                    $('#editEmployeeModal input[name="topic"]').val(meeting.topic);
+                    $('#editEmployeeModal input[name="start_time"]').val(meeting.start_time);
+                    $('#editEmployeeModal input[name="end_time"]').val(meeting.end_time);
+                },
+                error: function(xhr, status, error) {
+                    // Handle error
+                    console.error(error);
+                }
+            });
+        });
+    });
+</script>

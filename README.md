@@ -44,6 +44,9 @@ Back-end built with Python.
 
 Contributions are welcome! If you find any issues or have suggestions for improvement, please open an issue or submit a pull request.
 
+![image](https://github.com/rumeysaguc/mechsoft-task/assets/70983764/c8701166-2b93-4add-b07f-430824c4fc7c)
+
+
 ## License
 
 This project is licensed under the MIT License. See the LICENSE file for details.

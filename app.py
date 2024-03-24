@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for,  jsonify
+from flask import Flask, render_template, request, redirect, url_for,  flash
 from flask_sqlalchemy import SQLAlchemy
 import datetime
 
@@ -65,10 +65,9 @@ def form_create():
         meeting = Meeting(topic=topic, date=date, start_time=start_time, end_time=end_time, participants=participants)
         db.session.add(meeting)
         db.session.commit()
-        message = "Meeting created successfully!"
+    
+        return redirect(url_for('home'))
 
-        
-        return jsonify({'message': message})
     else:
         return render_template('index.html')
 

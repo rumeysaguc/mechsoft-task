@@ -50,9 +50,6 @@ The project uses SQLite as the database. You can find the database file `meeting
 
 Contributions are welcome! If you find any issues or have suggestions for improvement, please open an issue or submit a pull request.
 
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 
 ![image](https://github.com/rumeysaguc/mechsoft-task/assets/70983764/c8701166-2b93-4add-b07f-430824c4fc7c)

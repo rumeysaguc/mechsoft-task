@@ -21,16 +21,15 @@ with app.app_context():
 
     sample_meetings = [
         {"topic": "Backend Toplantısı", "date": datetime.datetime.strptime("2024-09-08", "%Y-%m-%d").date(), "start_time": datetime.datetime.strptime("09:00", "%H:%M").time(), "end_time": datetime.datetime.strptime("12:00", "%H:%M").time(), "participants": "Rümeysa, Ayşe, Seda"},
-        {"topic": "Frontend Toplantısı", "date": datetime.datetime.strptime("2024-07-18", "%Y-%m-%d").date(), "start_time": datetime.datetime.strptime("14:00", "%H:%M").time(), "end_time": datetime.datetime.strptime("16:00", "%H:%M").time(), "participants": "Berkant, Talha, Ali"},
-        {"topic": "Pazarlama Toplantısı", "date": datetime.datetime.strptime("2024-03-24", "%Y-%m-%d").date(), "start_time": datetime.datetime.strptime("15:00", "%H:%M").time(), "end_time": datetime.datetime.strptime("12:00", "%H:%M").time(), "participants": "Rümeysa, Ayşe, Seda"},
-        {"topic": "Genel Toplantı", "date": datetime.datetime.strptime("2024-01-29", "%Y-%m-%d").date(), "start_time": datetime.datetime.strptime("11:00", "%H:%M").time(), "end_time": datetime.datetime.strptime("16:00", "%H:%M").time(), "participants": "Berkant, Talha, Ali"},
+        {"topic": "Frontend Toplantısı", "date": datetime.datetime.strptime("2024-07-18", "%Y-%m-%d").date(), "start_time": datetime.datetime.strptime("14:00", "%H:%M").time(), "end_time": datetime.datetime.strptime("16:00", "%H:%M").time(), "participants": "Berkant, Talha"},
+        {"topic": "Pazarlama Toplantısı", "date": datetime.datetime.strptime("2024-03-24", "%Y-%m-%d").date(), "start_time": datetime.datetime.strptime("15:00", "%H:%M").time(), "end_time": datetime.datetime.strptime("12:00", "%H:%M").time(), "participants": "Ali, Merve, Kübra"},
+        {"topic": "Genel Toplantı", "date": datetime.datetime.strptime("2024-01-29", "%Y-%m-%d").date(), "start_time": datetime.datetime.strptime("11:00", "%H:%M").time(), "end_time": datetime.datetime.strptime("16:00", "%H:%M").time(), "participants": "Betül, Feyza, Rana"},
          ]
 
     for meeting_data in sample_meetings:
         meeting = Meeting(**meeting_data)
         db.session.add(meeting)
 
-    # Değişiklikleri kaydet
     db.session.commit()
 
 
@@ -55,7 +54,7 @@ def form_create():
     if request.method == 'POST':
         date_string = request.form['date']
         topic = request.form['topic']
-        participants = request.form['participants']  # Değiştirildi
+        participants = request.form['participants']  
         start_time_str = request.form['start_time']
         end_time_str = request.form['end_time']
         start_time = datetime.datetime.strptime(start_time_str, '%H:%M').time()
@@ -67,7 +66,7 @@ def form_create():
         db.session.add(meeting)
         db.session.commit()
     
-        return redirect(url_for('index'))
+        return redirect(url_for('home'))
 
     else:
         return render_template('index.html')
@@ -81,11 +80,21 @@ def form_edit(id):
     if request.method == 'POST':
         date_string = request.form['date']
         topic = request.form['topic']
-        participants = request.form['participants']  # Değiştirildi
+        participants = request.form['participants'] 
         start_time_str = request.form['start_time']
         end_time_str = request.form['end_time']
-        start_time = datetime.datetime.strptime(start_time_str, '%H:%M').time()
-        end_time = datetime.datetime.strptime(end_time_str, '%H:%M').time()
+        print("Start Time String:", start_time_str)
+        print("End Time String:", end_time_str)
+        if len(start_time_str) == 5:
+            start_time_format = '%H:%M'
+        elif len(start_time_str) == 8:
+            start_time_format = '%H:%M:%S'
+        if len(end_time_str) == 5:
+            end_time_format = '%H:%M'
+        elif len(end_time_str) == 8:
+            end_time_format = '%H:%M:%S'
+        start_time = datetime.datetime.strptime(start_time_str, start_time_format).time()
+        end_time = datetime.datetime.strptime(end_time_str, end_time_format).time()
 
         date = datetime.datetime.strptime(date_string, '%Y-%m-%d').date()
 
